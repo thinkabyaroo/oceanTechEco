@@ -25,7 +25,7 @@ class StoreProductRequest extends FormRequest
     {
         return [
             "title"=>"required|min:3",
-            "description"=>"required|min:20",
+//            "description"=>"required|min:20",
             'brand_id'=>'nullable',
             'category_id'=>'nullable',
             "photo"=>"nullable|file|mimes:jpeg,png|max:2000"

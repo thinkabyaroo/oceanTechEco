@@ -25,7 +25,7 @@ class StoreCategoryRequest extends FormRequest
     {
         return [
             "title"=>"required|min:3",
-            "description"=>"required|min:20"
+//            "description"=>"required|min:20"
         ];
     }
 }
