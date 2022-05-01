@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Models\Brand;
 use App\Http\Requests\StoreBrandRequest;
 use App\Http\Requests\UpdateBrandRequest;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Gate;
 
 class BrandController extends Controller
 {
@@ -13,6 +15,10 @@ class BrandController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
+    public function __construct()
+    {
+        $this->middleware('auth:sanctum');
+    }
 
     public function index()
     {
@@ -31,6 +37,7 @@ class BrandController extends Controller
         $brand=new Brand();
         $brand->title=$request->title;
         $brand->description=$request->description;
+        $brand->user_id=Auth::id();
         $brand->save();
         return $brand;
     }
@@ -46,6 +53,11 @@ class BrandController extends Controller
         $brand=Brand::find($id);
         if (is_null($brand)){
            return response()->json(["message"=>"Not found","status"=>404],404);
+        }
+        if (Gate::denies('view',$brand)){
+            return response()->json([
+                "message"=>'forbidden'
+            ],403);
         }
         return response()->json($brand);
     }
@@ -72,6 +84,12 @@ class BrandController extends Controller
         if (isset($request->description)){
             $brand->description=$request->description;
         }
+        if (Gate::denies('update',$brand)){
+            return response()->json([
+                "message"=>'forbidden'
+            ],403);
+        }
+
         $brand->update();
         return response()->json($brand);
     }
@@ -88,7 +106,11 @@ class BrandController extends Controller
         if (is_null($brand)){
             return response()->json(["message"=>"Not found","status"=>404],404);
         }
-
+        if (Gate::denies('delete',$brand)){
+            return response()->json([
+                "message"=>'forbidden'
+            ],403);
+        }
         $brand->delete();
         return response()->json(["message"=>"deleted"],204);
     }

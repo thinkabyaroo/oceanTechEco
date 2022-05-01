@@ -7,6 +7,8 @@ use App\Models\Product;
 use App\Http\Requests\StoreProductRequest;
 use App\Http\Requests\UpdateProductRequest;
 use Illuminate\Http\Resources\Json\JsonResource;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Storage;
 
 class ProductController extends Controller
@@ -16,6 +18,12 @@ class ProductController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
+
+    public function __construct()
+    {
+        $this->middleware('auth:sanctum');
+    }
+
     public function index()
     {
 //        $products=Product::get()->each(function ($contact){
@@ -46,6 +54,7 @@ class ProductController extends Controller
         $product->description =$request->description;
         $product->brand_id=$request->brand_id;
         $product->category_id=$request->category_id;
+        $product->user_id=Auth::id();
         if ($request->hasFile('photo')){
             $newName="photo_".uniqid().".".$request->file('photo')->extension();
             $request->file('photo')->storeAs('public/photo',$newName);
@@ -71,6 +80,11 @@ class ProductController extends Controller
             return response()->json([
                 'message'=>'not found'
             ],404);
+        }
+        if (Gate::denies('view',$product)){
+            return response()->json([
+                'message'=>'forbidden'
+            ],403);
         }
         return response()->json([
             'message'=>'success',
@@ -112,6 +126,11 @@ class ProductController extends Controller
             $request->file('photo')->storeAs('public/photo',$newName);
             $product->photo=$newName;
         }
+        if (Gate::denies('update',$product)){
+            return response()->json([
+                'message'=>'forbidden'
+            ],403);
+        }
         $product->update();
         return response()->json($product);
     }
@@ -129,6 +148,11 @@ class ProductController extends Controller
             return response()->json([
                     'message'=>'not found'
                 ],404);
+        }
+        if (Gate::denies('delete',$product)){
+            return response()->json([
+                'message'=>'forbidden'
+            ],403);
         }
         $product->delete();
         return response()->json([

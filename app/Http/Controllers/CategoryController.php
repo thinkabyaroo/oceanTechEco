@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Models\Category;
 use App\Http\Requests\StoreCategoryRequest;
 use App\Http\Requests\UpdateCategoryRequest;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Gate;
 
 class CategoryController extends Controller
 {
@@ -13,6 +15,11 @@ class CategoryController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
+    public function __construct()
+    {
+        $this->middleware('auth:sanctum');
+    }
+
     public function index()
     {
         $categories=Category::all();
@@ -30,6 +37,7 @@ class CategoryController extends Controller
         $category=new Category();
         $category->title=$request->title;
         $category->description=$request->description;
+        $category->user_id=Auth::id();
         $category->save();
         return $category;
     }
@@ -45,6 +53,11 @@ class CategoryController extends Controller
         $category=Category::find($id);
         if (is_null($category)){
            return response()->json(["message"=>"not found","status"=>404],404);
+        }
+        if (Gate::denies("view",$category)){
+            return response()->json([
+                "message"=>"forbidden"
+            ],403);
         }
         return response()->json($category);
     }
@@ -71,6 +84,11 @@ class CategoryController extends Controller
         if ($request->has('description')){
             $category->description=$request->description;
         }
+        if (Gate::denies("update",$category)){
+            return response()->json([
+                "message"=>"forbidden"
+            ],403);
+        }
         $category->update();
         return response()->json($category);
     }
@@ -86,6 +104,11 @@ class CategoryController extends Controller
         $category=Category::find($id);
         if (is_null($category)){
             return response()->json(["message"=>"not found","status"=>404],404);
+        }
+        if (Gate::denies("delete",$category)){
+            return response()->json([
+                "message"=>"forbidden"
+            ],403);
         }
 
         $category->delete();

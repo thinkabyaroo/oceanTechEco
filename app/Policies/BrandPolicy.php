@@ -30,7 +30,7 @@ class BrandPolicy
      */
     public function view(User $user, Brand $brand)
     {
-        //
+        return $user->id ===$brand->user_id;
     }
 
     /**
@@ -53,7 +53,7 @@ class BrandPolicy
      */
     public function update(User $user, Brand $brand)
     {
-        //
+        return $user->id ===$brand->user_id;
     }
 
     /**
@@ -65,7 +65,8 @@ class BrandPolicy
      */
     public function delete(User $user, Brand $brand)
     {
-        //
+        return $user->id ===$brand->user_id;
+
     }
 
     /**

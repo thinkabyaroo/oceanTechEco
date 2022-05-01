@@ -20,6 +20,7 @@ return new class extends Migration
             $table->unsignedBigInteger('brand_id')->nullable();
             $table->unsignedBigInteger('category_id')->nullable();
             $table->string('photo')->nullable();
+            $table->foreignId('user_id')->constrained()->cascadeOnDelete();
             $table->timestamps();
         });
     }
