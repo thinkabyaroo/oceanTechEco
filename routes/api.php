@@ -23,3 +23,4 @@ Route::apiResource("product",\App\Http\Controllers\ProductController::class);
 Route::post('/register',[ApiAuthController::class,'register']);
 Route::post('/login',[ApiAuthController::class,'login']);
 Route::post('/logout',[ApiAuthController::class,'logout'])->middleware('auth:sanctum');
+Route::post('/change-passsword',[ApiAuthController::class,'updatePassword'])->name('change-password')->middleware('auth:sanctum');
