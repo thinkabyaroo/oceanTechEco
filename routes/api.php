@@ -19,6 +19,8 @@ use App\Http\Controllers\ApiAuthController;
 Route::apiResource("brand",\App\Http\Controllers\BrandController::class);
 Route::apiResource("category",\App\Http\Controllers\CategoryController::class);
 Route::apiResource("product",\App\Http\Controllers\ProductController::class);
+Route::apiResource("order",\App\Http\Controllers\OrderController::class);
+Route::apiResource("cart",\App\Http\Controllers\CartController::class);
 
 Route::post('/register',[ApiAuthController::class,'register']);
 Route::post('/login',[ApiAuthController::class,'login']);
